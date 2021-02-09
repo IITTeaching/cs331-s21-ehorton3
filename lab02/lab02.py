@@ -34,7 +34,19 @@ ROMEO_SOLILOQUY = """
 # Implement this function
 def compute_ngrams(toks, n=2):
     """Returns an n-gram dictionary based on the provided list of tokens."""
-    pass
+    
+    dict = {}
+    for i in range(len(toks)-n+1):
+        wordsForTup=[]
+        for j in range(n-1):
+            wordsForTup.append(toks[i+j+1])
+        tup=tuple(wordsForTup)
+        #add the tuples
+        if not toks[i] in dict:
+            dict[toks[i]]=[tup]
+        else:
+            dict[toks[i]].append(tup)
+    return dict
 
 def test1():
     test1_1()
@@ -45,7 +57,6 @@ def test1_1():
     """A smaller test case for your ngram function."""
     tc = TestCase()
     simple_toks = [t.lower() for t in 'I really really like cake.'.split()]
-
     compute_ngrams(simple_toks)
     tc.assertEqual(compute_ngrams(simple_toks),
                    {'i': [('really',)], 'like': [('cake.',)], 'really': [('really',), ('like',)]})
@@ -92,8 +103,39 @@ def test1_2():
 # EXERCISE 2
 ################################################################################
 # Implement this function
+
+
 def gen_passage(ngram_dict, length=100):
     pass
+    passage=""
+    #select random key and append to passage
+    curKey =random.choice(sorted(ngram_dict.keys()))
+    passage+=curKey
+    passLeng=1
+    while passLeng<length:
+        #select random tuple from the dict with that key and append to passage
+        selTup= random.choice(ngram_dict[curKey])
+        for k in selTup:
+            passage+=" "
+            passage+=k
+            passLeng+=1
+        #curkey is set to last token
+        curKey=selTup[-1]
+        #check if curkey is a key otherwise choose and append a new key
+        if curKey not in ngram_dict.keys():
+            curKey =random.choice(sorted(ngram_dict.keys()))
+            passage+=" "
+            passage+=curKey
+            passLeng+=1
+            
+    return passage
+
+#1. Select a random key from the dictionary and use it as the start token of the passage. It will also serve as the current token for the next step.
+#2. Select a random tuple from the list associated with the current token and append the sequence to the passage.
+ #The last token of the selected sequence will be the new current token.
+#. If the current token is a key in the dictionary then simply repeat step 2, 
+#otherwise select another random key from the map as the current token and append it to the passage before repeating step 2.
+
 
 # 50 Points
 def test2():
@@ -112,6 +154,7 @@ def test2():
 def main():
     test1()
     test2()
+   
 
 if __name__ == '__main__':
     main()
