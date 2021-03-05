@@ -194,16 +194,16 @@ class ArrayList:
         list. Raises a ValueError if value is not found in the list."""
         ### BEGIN SOLUTION
         idx= -1
-        #print(self,value)
+        print(self,value)
         for i in range(self.len):
             if self.data[i]==value:
                 idx = i
                 break
         if idx != -1:
+            temp = self.data[idx]
             self.data[idx] = None
             for j in range (idx,self.len):
-                self.data[j]=self.data[j+1]
-            self.data[self.len] = None
+                self.data[i]=self.data[i+1]
             self.len = self.len-1
         else:
             raise ValueError
@@ -270,14 +270,10 @@ class ArrayList:
         specified, search through the end of the list for value. If value
         is not in the list, raise a ValueError."""
         ### BEGIN SOLUTION
-        #print(value, self)
         if j == None:
             j = self.len
-        j= self._normalize_idx(j)
-        i = self._normalize_idx(i)
         for k in range(i,j):
             if self[k] == value:
-                #print(k)
                 return k
         raise ValueError
         ### END SOLUTION
@@ -316,12 +312,11 @@ class ArrayList:
         """Returns a new ArrayList instance (with a separate data store), that
         contains the same values as this list."""
         ### BEGIN SOLUTION
-        newData =ConstrainedList(self.len)
+        newData =[]
+        for i in range (self.len):
+            newData.append(self.data[i])
         lst = ArrayList()
         lst.data=newData
-        for i in range (self.len):
-            lst.append(self.data[i])
-        return lst
         ### END SOLUTION
 
     def extend(self, other):
@@ -337,8 +332,6 @@ class ArrayList:
     def __iter__(self):
         """Supports iteration (via `iter(self)`)"""
         ### BEGIN SOLUTION
-        for i in range(self.len):
-            yield(self.data[i])
         ### END SOLUTION
 
 ################################################################################
@@ -609,9 +602,10 @@ def test_log(s):
 ########################################
 # All tests
 def main():
-    test_case_1()
-    test_case_2()
-    test_case_3()
+    #test_case_c()
+    #test_case_1()
+    #test_case_2()
+    #test_case_3()
     test_case_4()
     test_case_5()
     test_case_6()

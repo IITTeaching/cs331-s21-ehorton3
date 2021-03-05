@@ -194,7 +194,7 @@ class ArrayList:
         list. Raises a ValueError if value is not found in the list."""
         ### BEGIN SOLUTION
         idx= -1
-        #print(self,value)
+        print(self,value)
         for i in range(self.len):
             if self.data[i]==value:
                 idx = i
@@ -202,7 +202,7 @@ class ArrayList:
         if idx != -1:
             self.data[idx] = None
             for j in range (idx,self.len):
-                self.data[j]=self.data[j+1]
+                self.data[i]=self.data[i+1]
             self.data[self.len] = None
             self.len = self.len-1
         else:
@@ -609,13 +609,14 @@ def test_log(s):
 ########################################
 # All tests
 def main():
-    test_case_1()
-    test_case_2()
+    #test_case_c()
+    #test_case_1()
+    #test_case_2()
     test_case_3()
-    test_case_4()
-    test_case_5()
-    test_case_6()
-    test_case_7()
+    #test_case_4()
+    #test_case_5()
+    #test_case_6()
+    #test_case_7()
 
 if __name__ == '__main__':
     main()
