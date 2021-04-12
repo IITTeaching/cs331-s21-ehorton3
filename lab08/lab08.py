@@ -24,10 +24,26 @@ class Heap:
 
     def heapify(self, idx=0):
         ### BEGIN SOLUTION
+        for j in range(2):
+            for i in range (1,len(self.data)):
+                parent= self._parent(i)
+                parval= self.data[parent]
+                parvalk= self.key(self.data[parent])
+                ival = self.data[i]
+                ivalk = self.key(self.data[i])
+                if ivalk>parvalk:
+                    self.data[parent] = ival
+                    self.data[i] = parval
+
+        
+
         ### END SOLUTION
 
     def add(self, x):
         ### BEGIN SOLUTION
+        keyx= self.key(x)
+        self.data.append(x)
+        self.heapify()
         ### END SOLUTION
 
     def peek(self):
@@ -130,6 +146,32 @@ def test_key_heap_5():
 ################################################################################
 def running_medians(iterable):
     ### BEGIN SOLUTION
+    medians = []
+    minh = Heap()
+    maxh = Heap(lambda x:-x)
+
+    for i in iterable:
+        #add the new value to a heap
+        maxh.add(i)
+        minh.add(maxh.peek())
+        maxh.pop()
+        #check if either is too long
+        lendif =len(maxh)-len(minh)
+        if lendif<0:
+            maxh.add(minh.pop())
+        #find the median
+        if len(maxh)!=len(minh):
+            median = maxh.peek()
+        elif len(maxh)==len(minh):
+            median = (minh.peek()+maxh.peek())/2
+        else:
+            "big error"
+        medians.append(median)
+        #print("median",median,"maxh",maxh,"minh",minh)
+
+    return medians
+
+
     ### END SOLUTION
 
 ################################################################################
@@ -174,6 +216,13 @@ def test_median_3():
 ################################################################################
 def topk(items, k, keyf):
     ### BEGIN SOLUTION
+    heap = Heap(key=keyf)
+    for i in items:
+        heap.add(i)
+    ret = []
+    for i in range (k):
+        ret.append(heap.pop())
+    return ret
     ### END SOLUTION
 
 ################################################################################
@@ -213,11 +262,7 @@ def say_success():
 # MAIN
 ################################################################################
 def main():
-    for t in [test_key_heap_1,
-              test_key_heap_2,
-              test_key_heap_3,
-              test_key_heap_4,
-              test_key_heap_5,
+    for t in [
               test_median_1,
               test_median_2,
               test_median_3,
@@ -229,3 +274,11 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+"""
+test_key_heap_1,
+              test_key_heap_2,
+              test_key_heap_3,
+              test_key_heap_4,
+              test_key_heap_5,
+              """
