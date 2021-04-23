@@ -51,6 +51,24 @@ class HBStree:
         KeyError, if key does not exist.
         """
         # BEGIN SOLUTION
+        cont = True
+        curBase= self
+        while cont:
+            dif = key - curBase.val()
+            #pos if greater, neg if less
+            if dif ==0:
+                return key
+            elif dif >0:
+                if curBase.right() is None:
+                    raise KeyError
+                curBase=curBase.right()
+            elif dif <0:
+                if curBase.left() is None:
+                    raise KeyError
+                curBase=curBase.left()
+
+                
+
         # END SOLUTION
 
     def __contains__(self, el):
@@ -58,6 +76,21 @@ class HBStree:
         Return True if el exists in the current version of the tree.
         """
         # BEGIN SOLUTION
+        cont = True
+        curBase= self
+        while cont:
+            dif = el - curBase.val
+            #pos if greater, neg if less
+            if dif ==0:
+                return True
+            elif dif >0:
+                if curBase.right() is None:
+                    return False
+                curBase=curBase.right()
+            elif dif <0:
+                if curBase.left() is None:
+                    return False
+                curBase=curBase.left()
         # END SOLUTION
 
     def insert(self,key):
@@ -67,6 +100,29 @@ class HBStree:
         from creating a new version.
         """
         # BEGIN SOLUTION
+        if self.__contains__(key) is False:
+            OldHBS= self.__new__()
+            self.all_nodes(HBStree)
+            self.root_versions.append(OldHBS)
+            cont = True
+            curBase= self
+            while cont:
+                dif = key - curBase.val
+                #pos if greater, neg if less
+                if dif >0:
+                    if curBase.right() is None:
+                        curBase=curBase.right()
+                        curBase = self.__new__(val=key)
+                        cont= False
+                        break
+                    curBase=curBase.right()
+                elif dif <0:
+                    if curBase.left() is None:
+                        curBase=curBase.left()
+                        curBase = self.__new__(val=key)
+                        cont= False
+                        break
+                    curBase = curBase.left()
         # END SOLUTION
 
     def delete(self,key):
