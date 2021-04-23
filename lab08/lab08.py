@@ -24,8 +24,11 @@ class Heap:
 
     def heapify(self, idx=0):
         ### BEGIN SOLUTION
-        for j in range(2):
-            for i in range (1,len(self.data)):
+        Swapped= True
+        a=len(self.data)
+        while Swapped:
+            Swapped= False
+            for i in range (idx+1,a):
                 parent= self._parent(i)
                 parval= self.data[parent]
                 parvalk= self.key(self.data[parent])
@@ -34,16 +37,20 @@ class Heap:
                 if ivalk>parvalk:
                     self.data[parent] = ival
                     self.data[i] = parval
-
-        
-
+                    a= idx+1
+                    idx = self._parent(idx)
+                    if idx<0:
+                        idx=0
+                    Swapped=True
         ### END SOLUTION
 
     def add(self, x):
         ### BEGIN SOLUTION
         keyx= self.key(x)
         self.data.append(x)
-        self.heapify()
+        addex = len(self.data)-1
+        parent= self._parent(addex)
+        self.heapify(parent)
         ### END SOLUTION
 
     def peek(self):
@@ -170,8 +177,7 @@ def running_medians(iterable):
         #print("median",median,"maxh",maxh,"minh",minh)
 
     return medians
-
-
+    
     ### END SOLUTION
 
 ################################################################################
@@ -263,10 +269,15 @@ def say_success():
 ################################################################################
 def main():
     for t in [
+        test_key_heap_1,
+              test_key_heap_2,
+              test_key_heap_3,
+              test_key_heap_4,
+              test_key_heap_5,
               test_median_1,
               test_median_2,
-              test_median_3,
-              test_topk_students
+              test_topk_students,
+              test_median_3
               ]:
         say_test(t)
         t()
@@ -276,9 +287,5 @@ if __name__ == '__main__':
     main()
 
 """
-test_key_heap_1,
-              test_key_heap_2,
-              test_key_heap_3,
-              test_key_heap_4,
-              test_key_heap_5,
+
               """
