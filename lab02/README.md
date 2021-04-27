@@ -5,7 +5,6 @@
 An *n-gram* -- in the context of parsing natural languages such as English -- is a sequence of *n* consecutive *tokens* (which we might define as sequences of characters separated by whitespace) from some passage of text. Based on the following passage:
 
     I really really like cake.
-
 We have the following 2-grams:
 
     [('I', 'really'), ('really', 'really'), ('really', 'like'), ('like', 'cake.')]
