@@ -53,21 +53,24 @@ class HBStree:
         KeyError, if key does not exist.
         """
         # BEGIN SOLUTION
+        if len(self.root_versions) is 0:
+            raise KeyError
         cont = True
-        curBase= self
+        curBase= self.root_versions[self.num_versions()-1]
         while cont:
-            dif = key - curBase.val()
+            dif = key - curBase.val
             #pos if greater, neg if less
             if dif ==0:
                 return key
             elif dif >0:
-                if curBase.right() is None:
+                if curBase.right is None:
                     raise KeyError
-                curBase=curBase.right()
+                curBase=curBase.right
             elif dif <0:
-                if curBase.left() is None:
+                if curBase.left is None:
                     raise KeyError
-                curBase=curBase.left()
+                curBase=curBase.left
+        raise KeyError
 
                 
 
@@ -78,21 +81,27 @@ class HBStree:
         Return True if el exists in the current version of the tree.
         """
         # BEGIN SOLUTION
+        #print("el",el)
         cont = True
-        curBase= self
+        curBase= self.root_versions[self.num_versions()-1]
+        #print(curBase,"curbase")
+        if curBase is None:
+            cont = False
+            return False
         while cont:
+            #print("value checking:",el,"curbase:",curBase,"curbase val/type",isinstance(curBase,self.INode))
             dif = el - curBase.val
             #pos if greater, neg if less
             if dif ==0:
                 return True
             elif dif >0:
-                if curBase.right() is None:
+                if curBase.right is None:
                     return False
-                curBase=curBase.right()
+                curBase=curBase.right
             elif dif <0:
-                if curBase.left() is None:
+                if curBase.left is None:
                     return False
-                curBase=curBase.left()
+                curBase=curBase.left
         # END SOLUTION
 
     def insert(self,key):
@@ -103,34 +112,58 @@ class HBStree:
         """
         # BEGIN SOLUTION
         if self.__contains__(key) is False:
-            OldHBS= self.__new__()
-            self.all_nodes(HBStree)
-            self.root_versions.append(OldHBS)
-            cont = True
-            curBase= self
-            while cont:
-                dif = key - curBase.val
-                #pos if greater, neg if less
-                if dif >0:
-                    if curBase.right() is None:
-                        curBase=curBase.right()
-                        curBase = self.__new__(val=key)
-                        cont= False
-                        break
-                    curBase=curBase.right()
-                elif dif <0:
-                    if curBase.left() is None:
-                        curBase=curBase.left()
-                        curBase = self.__new__(val=key)
-                        cont= False
-                        break
-                    curBase = curBase.left()
+            newNode = self.INode(key,None,None)
+            if self.root_versions[-1] is None:
+                self.root_versions.append(newNode)
+            else:
+                NewTree=self.treeCopy((self.root_versions[-1]),key)
+                self.root_versions.append(NewTree)
+        #print(self)
         # END SOLUTION
+
+    def treeCopy(self,nodeFrom,keyVal):
+            dif = nodeFrom.val - keyVal
+                #pos if greater, neg if less
+                #>0 is root is bigger(Left), <0 is new value is bigger(right)
+            if dif >0:
+                if nodeFrom.left is None:
+                    return self.INode(nodeFrom.val,self.INode(keyVal,None,None),nodeFrom.right)
+                return self.INode(nodeFrom.val, self.treeCopy(nodeFrom.left,keyVal), nodeFrom.right)
+            elif dif <0:
+                if nodeFrom.right is None:
+                    return self.INode(nodeFrom.val,nodeFrom.left,self.INode(keyVal,None,None))
+                return self.INode(nodeFrom.val, nodeFrom.left, self.treeCopy(nodeFrom.right,keyVal))
+                
 
     def delete(self,key):
         """Delete key from the tree, creating a new version of the tree. If key does not exist in the current version of the tree, then do nothing and refrain from creating a new version."""
         # BEGIN SOLUTION
+        if self.__contains__(key) is True:
+            NewTree=self.treeCopyDel((self.root_versions[-1]),key)
+            self.root_versions.append(NewTree)
+        #print(self)
         # END SOLUTION
+    
+    def treeCopyDel(self,nodeFrom,keyVal):
+            dif = nodeFrom.val - keyVal
+                #pos if greater, neg if less
+                #>0 is root is bigger(Left), <0 is new value is bigger(right)
+            if dif == 0:
+                if nodeFrom.left is None and nodeFrom.right is None:
+                    return None
+                elif nodeFrom.left is None: 
+                        return nodeFrom.right
+                elif nodeFrom.right is None:
+                        return nodeFrom.left
+                elif nodeFrom.left is not None and nodeFrom.right is not None:
+                    checker = nodeFrom.left
+                    while checker.right is not None:
+                        checker = checker.right
+                    return self.INode(current.val, current.left, treeCopyDel(nodeFrom.right, checker))
+            if dif >0:
+                return self.INode(nodeFrom.val, self.treeCopyDel(nodeFrom.left,keyVal), nodeFrom.right)
+            elif dif <0:
+                return self.INode(nodeFrom.val, nodeFrom.left, self.treeCopyDel(nodeFrom.right,keyVal))
 
     @staticmethod
     def subtree_size(node):
@@ -147,6 +180,8 @@ class HBStree:
         Return the nuber of nodes in the current version of the tree.
         """
         return HBStree.subtree_size(self.get_current_root())
+
+    
 
     @staticmethod
     def all_nodes(r, nodes):
@@ -201,7 +236,15 @@ class HBStree:
         if timetravel < 0 or timetravel >= len(self.root_versions):
             raise IndexError(f"valid versions for time travel are 0 to {len(self.root_versions) -1}, but was {timetravel}")
         # BEGIN SOLUTION
+        version = self.root_versions[-1 - timetravel]
+        yield from self.recursIter(version)
         # END SOLUTION
+
+    def recursIter(self,base):
+        if base:
+            yield from self.recursIter(base.left)
+            yield base.val
+            yield from self.recursIter(base.right)
 
     @staticmethod
     def stringify_subtree(root):
@@ -380,12 +423,10 @@ def say_success():
 # MAIN
 ################################################################################
 def main():
-    for t in [test_insert_1,
-              test_insert_2,
-              test_lookup,
-              test_delete_1,
+    for t in [test_insert_1,test_insert_2,test_lookup,test_delete_1,
               test_delete_2,
-              test_corner_cases]:
+              test_corner_cases
+              ]:
         say_test(t)
         t()
         say_success()
@@ -393,3 +434,10 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+"""
+
+
+              
+              
+              """
