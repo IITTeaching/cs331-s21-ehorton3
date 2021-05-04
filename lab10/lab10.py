@@ -298,8 +298,7 @@ def test_stress_testing():
         tc.assertLess(abs(height(t.left) - height(t.right)), 2, 'Tree is out of balance')
 
     t = AVLTree()
-   # vals = list(range(1000))
-    vals = list(range(200))
+    vals = list(range(1000))
     random.shuffle(vals)
     for i in range(len(vals)):
         t.add(vals[i])
