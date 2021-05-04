@@ -15,6 +15,9 @@ class AVLTree:
 
         def rotate_left(self):
             ### BEGIN SOLUTION
+            n = self.right
+            self.val, n.val = n.val, self.val
+            self.right, n.right, self.left, n.left = n.right, n.left, n,self.left
             ### END SOLUTION
 
         @staticmethod
@@ -28,21 +31,126 @@ class AVLTree:
         self.size = 0
         self.root = None
 
+    def check_balance(self, t):
+        if t.left is None:
+            lh = 0
+        else:
+           lh= height(t.left)
+        if t.right is None:
+            rh=0
+        else:
+            rh=height(t.right)
+        dif = lh - rh
+        if dif >1:
+            return "l"
+        elif dif <-1:
+            return "r"
+        else:
+            return 0
     @staticmethod
-    def rebalance(t):
+    def rebalance(grand,par,val):
         ### BEGIN SOLUTION
+        if grand.left is par:
+            if par.left is val:
+                grand.rotate_right()
+            if par.right is val:
+                par.rotate_left()
+                grand.rotate_right()
+        if grand.right is par:
+            if par.left is val:
+                par.rotate_right()
+                grand.rotate_left()
+            if par.right is val:
+                grand.rotate_left()
+       
         ### END SOLUTION
 
     def add(self, val):
         assert(val not in self)
         ### BEGIN SOLUTION
+        if self.root is None:
+            self.root = self.Node(val)
+        else:
+            nextN = self.root
+            valN = None
+            moves= []
+            while nextN:
+                if val>nextN.val:
+                    if nextN.right is None:
+                        nextN.right = self.Node(val)
+                        valN = nextN.right
+                        moves.append("r")
+                        break
+                    else:
+                        nextN=nextN.right
+                        moves.append("r")
+                elif val<nextN.val:
+                    if nextN.left is None:
+                        nextN.left = self.Node(val)
+                        valN = nextN.left
+                        moves.append("l")
+                        break
+                    else:
+                        nextN=nextN.left
+                        moves.append("l")
+            self.add_balance(moves)
         ### END SOLUTION
+    
+    def add_balance (self,moves):
+        # find 3 vals
+        findingGrand = True
+        a=2
+        grand = self.root
+        #find first unbalanced parent node (add)
+        while findingGrand:
+            for i in range (len(moves)-a):
+                if moves[i]=="r":
+                    grand=grand.right
+                else:
+                    grand = grand.left
+            if grand is self.root:
+                findingGrand = False
+                break
+            else:
+                if self.check_balance(grand) is not 0:
+                    findingGrand = False
+                    break
+                else:
+                    a+=1
+                    grand=self.root
+            if a>len(moves):
+                findingGrand = False
+                break
+        b = a-1
+        c = a-2
+        child = self.root
+        grandchild= self.root
+        for i in range (len(moves)-b):
+                if moves[i]=="r":
+                    child=child.right
+                else:
+                    child = child.left
+        for i in range (len(moves)-c):
+                if moves[i]=="r":
+                    grandchild=grandchild.right
+                else:
+                    grandchild = grandchild.left
+        if grand and child and grandchild:
+            if self.check_balance(grand) is not 0:
+                self.rebalance(grand,child,grandchild)
+
+
 
     def __delitem__(self, val):
         assert(val in self)
         ### BEGIN SOLUTION
+        av2 = AVLTree()
+        for i in self:
+            if i is not val:
+                av2.add(i)
+        self.root = av2.root
         ### END SOLUTION
-
+    
     def __contains__(self, val):
         def contains_rec(node):
             if not node:
@@ -185,19 +293,19 @@ def test_key_order_after_ops():
 # 30 points
 def test_stress_testing():
     tc = TestCase()
-
+    
     def check_balance(t):
         tc.assertLess(abs(height(t.left) - height(t.right)), 2, 'Tree is out of balance')
 
     t = AVLTree()
-    vals = list(range(1000))
+   # vals = list(range(1000))
+    vals = list(range(200))
     random.shuffle(vals)
     for i in range(len(vals)):
         t.add(vals[i])
         for x in vals[:i+1]:
             tc.assertIn(x, t, 'Element added not in tree')
         traverse(t.root, check_balance)
-
     random.shuffle(vals)
     for i in range(len(vals)):
         del t[vals[i]]
