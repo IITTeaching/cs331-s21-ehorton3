@@ -1,23 +1,66 @@
 from unittest import TestCase
 import random
 
+
 def quicksort(lst,pivot_fn):
     qsort(lst,0,len(lst) - 1,pivot_fn)
 
 def qsort(lst,low,high,pivot_fn):
     ### BEGIN SOLUTION
+    if low <  high: 
+        split =pivot_fn(lst, low,high)  
+        qsort(lst,low, split-1,pivot_fn)
+        qsort(lst,split+1,high,pivot_fn)
     ### END SOLUTION
 
 def pivot_first(lst,low,high):
     ### BEGIN SOLUTION
+    piv = lst[low]
+    la = low
+    ha =high
+    while la <ha:
+        while lst[ha]>piv:
+            ha -=1
+        while lst[la]<piv:
+            la+=1
+        if la>=ha:
+            break
+        lst[la],lst[ha] = lst[ha],lst[la]
+    return la
     ### END SOLUTION
 
 def pivot_random(lst,low,high):
     ### BEGIN SOLUTION
+    
+    piv =random.randrange(low,high,1)
+    la = low
+    ha =high
+    while la <ha:
+        while lst[ha]>piv:
+            ha -=1
+        while lst[la]<piv:
+            la+=1
+        if la>=ha:
+            break
+        lst[la],lst[ha] = lst[ha],lst[la]
+    return la
     ### END SOLUTION
 
 def pivot_median_of_three(lst,low,high):
     ### BEGIN SOLUTION
+    import statistics
+    piv =statistics.median([lst[low], lst[(low + high) // 2], lst[high]])
+    la = low
+    ha =high
+    while la <ha:
+        while lst[ha]>piv:
+            ha -=1
+        while lst[la]<piv:
+            la+=1
+        if la>=ha:
+            break
+        lst[la],lst[ha] = lst[ha],lst[la]
+    return la
     ### END SOLUTION
 
 ################################################################################
